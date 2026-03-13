@@ -1,0 +1,14 @@
+{
+  "name": "cors-demo",
+  "version": "1.0.0",
+  "description": "Demo project to show CORS policy working mechanism",
+  "scripts": {
+    "start:backend-no-cors": "node server-no-cors.js",
+    "start:backend-with-cors": "node server-with-cors.js",
+    "start:frontend": "node frontend-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CORS Demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    h1 { text-align: center; margin-bottom: 0.5rem; font-size: 2rem; }
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+    .info-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+      font-size: 0.9rem;
+    }
+    .info-box code {
+      background: #334155;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+    .container {
+      display: flex;
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .card {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 1.5rem;
+      flex: 1;
+      min-width: 350px;
+      border: 1px solid #334155;
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge.fail { background: #dc2626; color: white; }
+    .badge.pass { background: #16a34a; color: white; }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; transform: scale(0.99); }
+    .btn-fail { background: #ef4444; color: white; }
+    .btn-pass { background: #22c55e; color: white; }
+    .result {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 1rem;
+      min-height: 120px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid #334155;
+      overflow-y: auto;
+      max-height: 250px;
+    }
+    .result.error { border-color: #ef4444; color: #fca5a5; }
+    .result.success { border-color: #22c55e; color: #86efac; }
+    .endpoint-btns { display: flex; gap: 0.5rem; }
+    .endpoint-btns button { flex: 1; font-size: 0.85rem; padding: 0.6rem; }
+    .label { color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>🌐 CORS Policy Demo</h1>
+  <p class="subtitle">
+    Frontend on <code>localhost:3000</code> → API on <code>localhost:4000</code>
+  </p>
+
+  <div class="info-box">
+    <strong>How it works:</strong><br/>
+    This page is served from <code>http://localhost:3000</code>.
+    It makes <code>fetch()</code> requests to an API on <code>http://localhost:4000</code>.<br/>
+    Since these are <strong>different origins</strong> (different ports), the browser enforces
+    <strong>CORS (Cross-Origin Resource Sharing)</strong> policy.<br/><br/>
+    🔴 <strong>Without CORS headers</strong> — the browser blocks the response.<br/>
+    🟢 <strong>With CORS headers</strong> — the server explicitly allows the frontend origin, so the request succeeds.
+  </div>
+
+  <div class="container">
+    <!-- CORS Blocked -->
+    <div class="card">
+      <h2>🔴 Without CORS <span class="badge fail">Blocked</span></h2>
+      <p class="label">Backend: <code>server-no-cors.js</code> (no CORS headers)</p>
+      <div class="endpoint-btns">
+        <button class="btn-fail" onclick="fetchNoCors('/api/data')">Fetch /api/data</button>
+        <button class="btn-fail" onclick="fetchNoCors('/api/user')">Fetch /api/user</button>
+      </div>
+      <div class="result" id="result-no-cors">Click a button to make a cross-origin request...
+
+The browser will BLOCK the response because
+the server does not send the required
+Access-Control-Allow-Origin header.</div>
+    </div>
+
+    <!-- CORS Enabled -->
+    <div class="card">
+      <h2>🟢 With CORS <span class="badge pass">Allowed</span></h2>
+      <p class="label">Backend: <code>server-with-cors.js</code> (CORS enabled)</p>
+      <div class="endpoint-btns">
+        <button class="btn-pass" onclick="fetchWithCors('/api/data')">Fetch /api/data</button>
+        <button class="btn-pass" onclick="fetchWithCors('/api/user')">Fetch /api/user</button>
+      </div>
+      <div class="result" id="result-with-cors">Click a button to make a cross-origin request...
+
+The server includes the header:
+Access-Control-Allow-Origin: http://localhost:3000
+so the browser allows the response.</div>
+    </div>
+  </div>
+
+  <script>
+    const API = "http://localhost:4000";
+
+    async function fetchNoCors(endpoint) {
+      const el = document.getElementById("result-no-cors");
+      el.className = "result";
+      el.textContent = `Fetching ${API}${endpoint} ...\n`;
+      try {
+        const res = await fetch(`${API}${endpoint}`);
+        const data = await res.json();
+        el.textContent += `\n✅ Response:\n${JSON.stringify(data, null, 2)}`;
+        el.classList.add("success");
+      } catch (err) {
+        el.textContent += `\n❌ CORS ERROR!\n\n${err.message}\n\n` +
+          `→ Open DevTools (F12) → Console tab to see the full error.\n` +
+          `→ The browser blocked this because the server\n` +
+          `  did not include Access-Control-Allow-Origin header.`;
+        el.classList.add("error");
+      }
+    }
+
+    async function fetchWithCors(endpoint) {
+      const el = document.getElementById("result-with-cors");
+      el.className = "result";
+      el.textContent = `Fetching ${API}${endpoint} ...\n`;
+      try {
+        const res = await fetch(`${API}${endpoint}`);
+        const data = await res.json();
+        el.textContent += `\n✅ Response:\n${JSON.stringify(data, null, 2)}`;
+        el.classList.add("success");
+      } catch (err) {
+        el.textContent += `\n❌ Error: ${err.message}\n\n` +
+          `→ Make sure server-with-cors.js is running on port 4000.`;
+        el.classList.add("error");
+      }
+    }
+  </script>
+</body>
+</html>
