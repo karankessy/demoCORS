@@ -3,12 +3,15 @@ const cors = require("cors");
 const app = express();
 const PORT = 4000;
 
-// ✅ Enable CORS — allows requests from other origins
+app.use(express.json());
+
 app.use(
   cors({
-    origin: "http://localhost:3000", // allow only the frontend origin
-    methods: ["GET", "POST"],        // allowed HTTP methods
-    allowedHeaders: ["Content-Type"], // allowed headers
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+    maxAge: 86400,
   })
 );
 
@@ -25,6 +28,15 @@ app.get("/api/user", (req, res) => {
     name: "Karan",
     role: "Developer",
     email: "karan@example.com",
+  });
+});
+
+app.post("/api/data", (req, res) => {
+  const { item } = req.body || {};
+  res.status(201).json({
+    message: "Item received!",
+    received: item || null,
+    timestamp: new Date().toISOString(),
   });
 });
 

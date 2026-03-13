@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const PORT = 4000;
 
+app.use(express.json());
+
 app.get("/api/data", (req, res) => {
   res.json({
     message: "Hello from the API server!",
@@ -15,6 +17,15 @@ app.get("/api/user", (req, res) => {
     name: "Karan",
     role: "Developer",
     email: "karan@example.com",
+  });
+});
+
+app.post("/api/data", (req, res) => {
+  const { item } = req.body || {};
+  res.status(201).json({
+    message: "Item received!",
+    received: item || null,
+    timestamp: new Date().toISOString(),
   });
 });
 

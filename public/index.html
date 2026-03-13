@@ -13,11 +13,11 @@
       padding: 2rem;
       min-height: 100vh;
     }
-    h1 { text-align: center; margin-bottom: 0.5rem; font-size: 2rem; }
+    h1 { text-align: center; margin-bottom: 0.25rem; font-size: 2rem; }
     .subtitle {
       text-align: center;
       color: #94a3b8;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       font-size: 0.95rem;
     }
     .info-box {
@@ -25,7 +25,7 @@
       border: 1px solid #334155;
       border-radius: 10px;
       padding: 1.2rem;
-      max-width: 700px;
+      max-width: 1100px;
       margin: 0 auto 2rem;
       line-height: 1.7;
       font-size: 0.9rem;
@@ -36,11 +36,20 @@
       border-radius: 4px;
       font-size: 0.85rem;
     }
+    .section-title {
+      text-align: center;
+      font-size: 1rem;
+      color: #94a3b8;
+      margin: 2rem 0 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
     .container {
       display: flex;
-      gap: 2rem;
-      max-width: 900px;
-      margin: 0 auto;
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto 1.5rem;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -49,57 +58,97 @@
       border-radius: 12px;
       padding: 1.5rem;
       flex: 1;
-      min-width: 350px;
+      min-width: 320px;
+      max-width: 360px;
       border: 1px solid #334155;
     }
     .card h2 {
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
     .badge {
-      font-size: 0.7rem;
-      padding: 3px 8px;
+      font-size: 0.65rem;
+      padding: 2px 8px;
       border-radius: 20px;
       font-weight: 600;
       text-transform: uppercase;
     }
     .badge.fail { background: #dc2626; color: white; }
     .badge.pass { background: #16a34a; color: white; }
+    .badge.info { background: #2563eb; color: white; }
+    .badge.warn { background: #d97706; color: white; }
     button {
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.6rem;
       border-radius: 8px;
       border: none;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       transition: transform 0.1s, opacity 0.2s;
     }
     button:hover { opacity: 0.9; transform: scale(0.99); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .btn-fail { background: #ef4444; color: white; }
     .btn-pass { background: #22c55e; color: white; }
+    .btn-info { background: #3b82f6; color: white; }
+    .btn-warn { background: #f59e0b; color: white; }
     .result {
       background: #0f172a;
       border-radius: 8px;
-      padding: 1rem;
-      min-height: 120px;
+      padding: 0.75rem;
+      min-height: 100px;
       font-family: 'Courier New', monospace;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       white-space: pre-wrap;
       word-break: break-word;
       border: 1px solid #334155;
       overflow-y: auto;
-      max-height: 250px;
+      max-height: 220px;
     }
     .result.error { border-color: #ef4444; color: #fca5a5; }
     .result.success { border-color: #22c55e; color: #86efac; }
-    .endpoint-btns { display: flex; gap: 0.5rem; }
-    .endpoint-btns button { flex: 1; font-size: 0.85rem; padding: 0.6rem; }
-    .label { color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .result.info-result { border-color: #3b82f6; color: #93c5fd; }
+    .endpoint-btns { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .endpoint-btns button { flex: 1; font-size: 0.8rem; padding: 0.5rem; }
+    .label { color: #94a3b8; font-size: 0.75rem; margin-bottom: 0.5rem; }
+    .headers-toggle {
+      font-size: 0.7rem;
+      color: #60a5fa;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-top: 0.5rem;
+      display: inline-block;
+    }
+    .headers-box {
+      display: none;
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.72rem;
+      white-space: pre-wrap;
+      color: #cbd5e1;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .headers-box.visible { display: block; }
+    footer {
+      text-align: center;
+      color: #475569;
+      font-size: 0.75rem;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #1e293b;
+    }
+    footer a { color: #60a5fa; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -112,77 +161,195 @@
     <strong>How it works:</strong><br/>
     This page is served from <code>http://localhost:3000</code>.
     It makes <code>fetch()</code> requests to an API on <code>http://localhost:4000</code>.<br/>
-    Since these are <strong>different origins</strong> (different ports), the browser enforces
+    Since these are <strong>different origins</strong> (different ports = different origin), the browser enforces
     <strong>CORS (Cross-Origin Resource Sharing)</strong> policy.<br/><br/>
-    🔴 <strong>Without CORS headers</strong> — the browser blocks the response.<br/>
-    🟢 <strong>With CORS headers</strong> — the server explicitly allows the frontend origin, so the request succeeds.
+    🔵 <strong>Same-Origin</strong> — requests to <code>localhost:3000</code> always succeed (no CORS involved).<br/>
+    🔴 <strong>Without CORS headers</strong> — the browser blocks the cross-origin response.<br/>
+    🟢 <strong>With CORS headers</strong> — the server explicitly allows the frontend origin.<br/>
+    🟡 <strong>Preflight</strong> — the browser sends an <code>OPTIONS</code> request first for non-simple requests.
   </div>
 
+  <!-- Section 1: Simple Requests -->
+  <div class="section-title">① Simple Requests (GET)</div>
   <div class="container">
-    <!-- CORS Blocked -->
     <div class="card">
-      <h2>🔴 Without CORS <span class="badge fail">Blocked</span></h2>
-      <p class="label">Backend: <code>server-no-cors.js</code> (no CORS headers)</p>
+      <h2>🔵 Same-Origin <span class="badge info">Always Works</span></h2>
+      <p class="label">Request stays on <code>localhost:3000</code> — no CORS check needed</p>
+      <button class="btn-info" onclick="doFetch('/api/same-origin', 'result-same', { sameOrigin: true })">
+        Fetch /api/same-origin
+      </button>
+      <div class="result" id="result-same">Click to make a same-origin request.
+
+No CORS headers needed — the browser
+does not enforce CORS for same-origin.</div>
+      <span class="headers-toggle" onclick="toggleHeaders('headers-same')">Show Response Headers</span>
+      <div class="headers-box" id="headers-same"></div>
+    </div>
+
+    <div class="card">
+      <h2>🔴 Cross-Origin (No CORS) <span class="badge fail">Blocked</span></h2>
+      <p class="label">Backend: <code>server-no-cors.js</code> — no CORS headers</p>
       <div class="endpoint-btns">
-        <button class="btn-fail" onclick="fetchNoCors('/api/data')">Fetch /api/data</button>
-        <button class="btn-fail" onclick="fetchNoCors('/api/user')">Fetch /api/user</button>
+        <button class="btn-fail" onclick="doFetch('/api/data', 'result-no-cors', { port: 4000 })">
+          /api/data
+        </button>
+        <button class="btn-fail" onclick="doFetch('/api/user', 'result-no-cors', { port: 4000 })">
+          /api/user
+        </button>
       </div>
-      <div class="result" id="result-no-cors">Click a button to make a cross-origin request...
+      <div class="result" id="result-no-cors">Click to make a cross-origin request.
 
 The browser will BLOCK the response because
-the server does not send the required
+the server does not include the required
 Access-Control-Allow-Origin header.</div>
+      <span class="headers-toggle" onclick="toggleHeaders('headers-no-cors')">Show Response Headers</span>
+      <div class="headers-box" id="headers-no-cors"></div>
     </div>
 
-    <!-- CORS Enabled -->
     <div class="card">
-      <h2>🟢 With CORS <span class="badge pass">Allowed</span></h2>
-      <p class="label">Backend: <code>server-with-cors.js</code> (CORS enabled)</p>
+      <h2>🟢 Cross-Origin (With CORS) <span class="badge pass">Allowed</span></h2>
+      <p class="label">Backend: <code>server-with-cors.js</code> — CORS enabled</p>
       <div class="endpoint-btns">
-        <button class="btn-pass" onclick="fetchWithCors('/api/data')">Fetch /api/data</button>
-        <button class="btn-pass" onclick="fetchWithCors('/api/user')">Fetch /api/user</button>
+        <button class="btn-pass" onclick="doFetch('/api/data', 'result-with-cors', { port: 4000 })">
+          /api/data
+        </button>
+        <button class="btn-pass" onclick="doFetch('/api/user', 'result-with-cors', { port: 4000 })">
+          /api/user
+        </button>
       </div>
-      <div class="result" id="result-with-cors">Click a button to make a cross-origin request...
+      <div class="result" id="result-with-cors">Click to make a cross-origin request.
 
-The server includes the header:
+The server responds with the header:
 Access-Control-Allow-Origin: http://localhost:3000
-so the browser allows the response.</div>
+so the browser allows JavaScript to read it.</div>
+      <span class="headers-toggle" onclick="toggleHeaders('headers-with-cors')">Show Response Headers</span>
+      <div class="headers-box" id="headers-with-cors"></div>
     </div>
   </div>
 
-  <script>
-    const API = "http://localhost:4000";
+  <!-- Section 2: Preflight Requests -->
+  <div class="section-title">② Preflight Requests (POST with JSON + Custom Headers)</div>
+  <div class="container">
+    <div class="card">
+      <h2>🔴 Preflight Blocked <span class="badge fail">No CORS</span></h2>
+      <p class="label">POST with <code>Content-Type: application/json</code> triggers OPTIONS preflight</p>
+      <button class="btn-fail" onclick="doPreflightFetch('result-preflight-no', 'headers-preflight-no', { port: 4000 })">
+        POST /api/data (no CORS server)
+      </button>
+      <div class="result" id="result-preflight-no">Click to trigger a preflight request.
 
-    async function fetchNoCors(endpoint) {
-      const el = document.getElementById("result-no-cors");
+POST with application/json is NOT a "simple request"
+so the browser sends OPTIONS first.
+Without CORS headers, preflight fails and the
+actual POST is never sent.</div>
+      <span class="headers-toggle" onclick="toggleHeaders('headers-preflight-no')">Show Response Headers</span>
+      <div class="headers-box" id="headers-preflight-no"></div>
+    </div>
+
+    <div class="card">
+      <h2>🟢 Preflight Allowed <span class="badge pass">CORS OK</span></h2>
+      <p class="label">Server responds to OPTIONS with correct CORS headers</p>
+      <button class="btn-pass" onclick="doPreflightFetch('result-preflight-yes', 'headers-preflight-yes', { port: 4000 })">
+        POST /api/data (with CORS server)
+      </button>
+      <div class="result" id="result-preflight-yes">Click to trigger a preflight request.
+
+The browser sends OPTIONS first.
+Server approves it with the correct headers.
+Then the actual POST is sent and succeeds.</div>
+      <span class="headers-toggle" onclick="toggleHeaders('headers-preflight-yes')">Show Response Headers</span>
+      <div class="headers-box" id="headers-preflight-yes"></div>
+    </div>
+  </div>
+
+  <footer>
+    CORS Demo — Built for learning &amp; teaching.
+    Open <strong>DevTools → Network tab</strong> to inspect the full request/response cycle.
+  </footer>
+
+  <script>
+    const CROSS_ORIGIN = "http://localhost:4000";
+
+    function buildUrl(endpoint, opts) {
+      if (opts.sameOrigin) return endpoint;
+      if (opts.port) return `http://localhost:${opts.port}${endpoint}`;
+      return `${CROSS_ORIGIN}${endpoint}`;
+    }
+
+    function formatHeaders(headers) {
+      const lines = [];
+      headers.forEach((value, key) => {
+        lines.push(`${key}: ${value}`);
+      });
+      return lines.join("\n") || "(no headers visible to JavaScript)";
+    }
+
+    function toggleHeaders(id) {
+      document.getElementById(id).classList.toggle("visible");
+    }
+
+    async function doFetch(endpoint, resultId, opts = {}) {
+      const el = document.getElementById(resultId);
+      const headersId = resultId.replace("result-", "headers-");
+      const headersEl = document.getElementById(headersId);
+      const url = buildUrl(endpoint, opts);
+
       el.className = "result";
-      el.textContent = `Fetching ${API}${endpoint} ...\n`;
+      el.textContent = `→ GET ${url}\n`;
+
       try {
-        const res = await fetch(`${API}${endpoint}`);
+        const res = await fetch(url);
         const data = await res.json();
-        el.textContent += `\n✅ Response:\n${JSON.stringify(data, null, 2)}`;
-        el.classList.add("success");
+
+        if (headersEl) headersEl.textContent = formatHeaders(res.headers);
+
+        el.textContent += `← ${res.status} ${res.statusText}\n\n`;
+        el.textContent += `✅ Response:\n${JSON.stringify(data, null, 2)}`;
+        el.classList.add(opts.sameOrigin ? "info-result" : "success");
       } catch (err) {
-        el.textContent += `\n❌ CORS ERROR!\n\n${err.message}\n\n` +
-          `→ Open DevTools (F12) → Console tab to see the full error.\n` +
-          `→ The browser blocked this because the server\n` +
-          `  did not include Access-Control-Allow-Origin header.`;
+        if (headersEl) headersEl.textContent = "(blocked — headers not accessible)";
+
+        el.textContent += `\n❌ CORS ERROR\n${err.message}\n\n`;
+        el.textContent += `The browser blocked JavaScript from reading\n`;
+        el.textContent += `the response. Open DevTools (F12) → Console\n`;
+        el.textContent += `to see the full error message.`;
         el.classList.add("error");
       }
     }
 
-    async function fetchWithCors(endpoint) {
-      const el = document.getElementById("result-with-cors");
+    async function doPreflightFetch(resultId, headersId, opts = {}) {
+      const el = document.getElementById(resultId);
+      const headersEl = document.getElementById(headersId);
+      const url = `http://localhost:${opts.port}/api/data`;
+
       el.className = "result";
-      el.textContent = `Fetching ${API}${endpoint} ...\n`;
+      el.textContent = `→ POST ${url}\n`;
+      el.textContent += `  Content-Type: application/json\n`;
+      el.textContent += `  (triggers OPTIONS preflight)\n\n`;
+
       try {
-        const res = await fetch(`${API}${endpoint}`);
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ item: "Dragonfruit" }),
+        });
         const data = await res.json();
-        el.textContent += `\n✅ Response:\n${JSON.stringify(data, null, 2)}`;
+
+        if (headersEl) headersEl.textContent = formatHeaders(res.headers);
+
+        el.textContent += `← ${res.status} ${res.statusText}\n\n`;
+        el.textContent += `✅ Preflight passed! Response:\n`;
+        el.textContent += JSON.stringify(data, null, 2);
         el.classList.add("success");
       } catch (err) {
-        el.textContent += `\n❌ Error: ${err.message}\n\n` +
-          `→ Make sure server-with-cors.js is running on port 4000.`;
+        if (headersEl) headersEl.textContent = "(blocked — headers not accessible)";
+
+        el.textContent += `❌ PREFLIGHT FAILED\n${err.message}\n\n`;
+        el.textContent += `The browser sent an OPTIONS request first.\n`;
+        el.textContent += `The server did not return valid CORS headers,\n`;
+        el.textContent += `so the actual POST was never sent.\n\n`;
+        el.textContent += `Check DevTools → Network → look for the\n`;
+        el.textContent += `OPTIONS request to see what happened.`;
         el.classList.add("error");
       }
     }
