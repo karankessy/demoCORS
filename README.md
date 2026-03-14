@@ -1,4 +1,4 @@
-# CORS Demo
+# demoCORS
 
 An interactive demo project built for **learning and teaching** how [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) works in the browser.
 
@@ -6,29 +6,34 @@ This project was developed as a companion to an in-depth technical article on CO
 
 ## What This Demo Shows
 
-| Scenario | What Happens |
-|---|---|
-| **Same-Origin Request** | Request to `localhost:3000` from `localhost:3000` — always works, no CORS involved |
-| **Cross-Origin Without CORS** | Request to `localhost:4000` — browser **blocks** the response (no `Access-Control-Allow-Origin` header) |
-| **Cross-Origin With CORS** | Request to `localhost:4000` — server sends correct CORS headers, browser **allows** the response |
-| **Preflight (Blocked)** | `POST` with `Content-Type: application/json` triggers an `OPTIONS` preflight — fails without CORS |
-| **Preflight (Allowed)** | Same `POST` to the CORS-enabled server — preflight passes, actual request succeeds |
+| Scenario | Server | What Happens |
+|---|---|---|
+| **Same-Origin Request** | `:3000` → `:3000` | Always works — no CORS involved |
+| **Cross-Origin Without CORS** | `:3000` → `:4000` | Browser **blocks** the response (no CORS headers) |
+| **Cross-Origin With CORS** | `:3000` → `:4001` | Server sends CORS headers — browser **allows** the response |
+| **Preflight Blocked** | `:3000` → `:4000` | `POST` with JSON triggers `OPTIONS` preflight — fails |
+| **Preflight Allowed** | `:3000` → `:4001` | Preflight passes — `POST` succeeds |
 
 ## Architecture
 
+All three servers run **simultaneously** on different ports:
+
 ```
-┌─────────────────────┐         ┌──────────────────────────┐
-│  Frontend Server     │  fetch  │  Backend Server           │
-│  localhost:3000      │ ──────► │  localhost:4000            │
-│                      │         │                            │
-│  Serves index.html   │         │  Option A: server-no-cors  │
-│  + same-origin API   │         │  Option B: server-with-cors│
-└─────────────────────┘         └──────────────────────────┘
-       Origin A                         Origin B
-  (http://localhost:3000)         (http://localhost:4000)
+┌──────────────────────┐
+│   Frontend Server     │    fetch('/api/same-origin')
+│   localhost:3000      │ ─────────────────────────────── ✅ Same-Origin (always works)
+│                       │
+│   Serves index.html   │    fetch('http://localhost:4000/...')
+│   + same-origin API   │ ──────────────────────────────► 🚫 Backend (NO CORS)
+│                       │
+│                       │    fetch('http://localhost:4001/...')
+│                       │ ──────────────────────────────► ✅ Backend (WITH CORS)
+└──────────────────────┘
+
+  Origin A (:3000)          Origin B (:4000)         Origin C (:4001)
 ```
 
-Different ports = **different origins**. The browser enforces CORS on every `fetch()` from Origin A to Origin B.
+Different ports = **different origins**. The browser enforces CORS on every `fetch()` from one origin to another.
 
 ## Getting Started
 
@@ -46,27 +51,26 @@ npm install
 
 ### Run
 
-You need **two terminals** — one for the frontend, one for the backend.
-
-**Terminal 1 — Frontend:**
+A single command starts all three servers:
 
 ```bash
-npm run start:frontend
+npm start
 ```
 
-**Terminal 2 — Backend (choose one):**
-
-```bash
-# Without CORS headers (requests will be blocked):
-npm run start:backend-no-cors
-
-# With CORS headers (requests will succeed):
-npm run start:backend-with-cors
-```
+This boots:
+- **Frontend** on [http://localhost:3000](http://localhost:3000)
+- **Backend (no CORS)** on [http://localhost:4000](http://localhost:4000)
+- **Backend (with CORS)** on [http://localhost:4001](http://localhost:4001)
 
 Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
-> **Tip:** Start with `server-no-cors.js` to see the blocked requests, then restart with `server-with-cors.js` to see them succeed. Or run them one at a time and observe the difference.
+You can also run each server individually:
+
+```bash
+npm run start:frontend      # port 3000
+npm run start:no-cors       # port 4000
+npm run start:with-cors     # port 4001
+```
 
 ## What to Look For
 
@@ -81,7 +85,7 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 ```
 ├── frontend-server.js      # Express static server (port 3000) + same-origin API
 ├── server-no-cors.js       # API server without CORS headers (port 4000)
-├── server-with-cors.js     # API server with CORS enabled (port 4000)
+├── server-with-cors.js     # API server with CORS enabled (port 4001)
 ├── public/
 │   └── index.html          # Interactive frontend UI
 └── package.json

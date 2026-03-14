@@ -8,12 +8,11 @@ app.use(express.static(path.join(__dirname, "public")));
 app.get("/api/same-origin", (req, res) => {
   res.json({
     message: "This response is from the SAME origin (port 3000).",
-    origin: `http://localhost:${PORT}`,
+    server: `http://localhost:${PORT}`,
     timestamp: new Date().toISOString(),
   });
 });
 
 app.listen(PORT, () => {
-  console.log(`\n🌐 Frontend server running on http://localhost:${PORT}`);
-  console.log(`   Open http://localhost:${PORT} in your browser.\n`);
+  console.log(`  🌐 Frontend            → http://localhost:${PORT}`);
 });

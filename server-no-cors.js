@@ -6,7 +6,8 @@ app.use(express.json());
 
 app.get("/api/data", (req, res) => {
   res.json({
-    message: "Hello from the API server!",
+    message: "Hello from the API server (NO CORS)!",
+    server: `http://localhost:${PORT}`,
     timestamp: new Date().toISOString(),
     items: ["Apple", "Banana", "Cherry"],
   });
@@ -23,14 +24,12 @@ app.get("/api/user", (req, res) => {
 app.post("/api/data", (req, res) => {
   const { item } = req.body || {};
   res.status(201).json({
-    message: "Item received!",
+    message: "Item received (NO CORS server)!",
     received: item || null,
     timestamp: new Date().toISOString(),
   });
 });
 
 app.listen(PORT, () => {
-  console.log(`\n🚫 Backend server (NO CORS) running on http://localhost:${PORT}`);
-  console.log(`   Try opening http://localhost:3000 in your browser.`);
-  console.log(`   Requests from port 3000 → port ${PORT} will be BLOCKED by CORS policy.\n`);
+  console.log(`  🚫 Backend (NO CORS)   → http://localhost:${PORT}`);
 });
